@@ -5,6 +5,7 @@ import {
   FlatList,
   Text,
 } from 'react-native';
+import { AnimatedScreen } from './components/AnimatedScreen';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { TaskItem } from './components/TaskItem';
 import { Task } from './types/task';
@@ -25,7 +26,7 @@ export default function HighPriority() {
   return (
     <>
       <Stack.Screen options={{ title: 'High Priority Tasks' }} />
-      <View style={styles.container}>
+      <AnimatedScreen style={styles.container}>
         {sortedTasks.length > 0 ? (
           <FlatList
             data={sortedTasks}
@@ -46,7 +47,7 @@ export default function HighPriority() {
             <Text style={styles.emptyText}>No high priority tasks</Text>
           </View>
         )}
-      </View>
+      </AnimatedScreen>
     </>
   );
 }

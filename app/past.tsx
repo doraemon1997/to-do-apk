@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Text, Alert } from 'react-native';
+import { StyleSheet, FlatList, Text, Alert } from 'react-native';
+import { AnimatedScreen } from './components/AnimatedScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TaskItem } from './components/TaskItem';
 import { Task } from './types/task';
@@ -44,9 +45,9 @@ export default function PastTasksView() {
   }).sort((a, b) => parseLocalDate(b.dueDate).getTime() - parseLocalDate(a.dueDate).getTime());
 
   return (
-    <View style={styles.container}>
+    <AnimatedScreen style={styles.container}>
       <StatusBar style="auto" />
-  <Text style={styles.header}>Past 7 Days Tasks</Text>
+      <Text style={styles.header}>Past 7 Days Tasks</Text>
       <FlatList
         data={pastTasks}
         keyExtractor={(item) => item.id}
@@ -62,7 +63,7 @@ export default function PastTasksView() {
         style={styles.list}
         ListEmptyComponent={<Text style={styles.empty}>No tasks in the past 7 days.</Text>}
       />
-    </View>
+    </AnimatedScreen>
   );
 }
 

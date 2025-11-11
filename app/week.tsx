@@ -7,6 +7,7 @@ import {
   Text,
   Alert,
 } from 'react-native';
+import { AnimatedScreen } from './components/AnimatedScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TaskItem } from './components/TaskItem';
@@ -171,7 +172,7 @@ export default function WeekView() {
   };
 
   return (
-    <View style={styles.container}>
+    <AnimatedScreen style={styles.container}>
       <StatusBar style="auto" />
 
       <FlatList
@@ -216,7 +217,7 @@ export default function WeekView() {
         onSave={editingTask ? handleEditTask : handleAddTask}
         editingTask={editingTask}
       />
-    </View>
+    </AnimatedScreen>
   );
 }
 

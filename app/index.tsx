@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AnimatedScreen } from './components/AnimatedScreen';
 import {
   View,
   StyleSheet,
@@ -176,7 +177,7 @@ export default function Index() {
   const highPriorityTasks = tasks.filter(task => !task.completed && task.priority === 'high');
 
   return (
-    <View style={styles.container}>
+    <AnimatedScreen style={styles.container}>
       <StatusBar style="auto" />
 
       <FlatList
@@ -236,7 +237,7 @@ export default function Index() {
         onSave={editingTask ? handleEditTask : handleAddTask}
         editingTask={editingTask}
       />
-    </View>
+    </AnimatedScreen>
   );
 }
 
