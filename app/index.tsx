@@ -12,6 +12,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { TaskItem } from './components/TaskItem';
 import { AddTaskModal } from './components/AddTaskModal';
 import { Task } from './types/task';
+import NotificationsUtil from './utils/notifications';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 
@@ -36,7 +37,16 @@ export default function Index() {
     try {
       const savedTasks = await AsyncStorage.getItem(STORAGE_KEY);
       if (savedTasks) {
-        setTasks(JSON.parse(savedTasks));
+        const parsed: Task[] = JSON.parse(savedTasks);
+        setTasks(parsed);
+        // Ensure notifications are scheduled for existing tasks
+        parsed.forEach(t => {
+          NotificationsUtil.scheduleNotificationsForTask(t).catch(() => {});
+        });
+        // Schedule daily summary if needed
+        const todayString = getTodayString();
+        const countToday = parsed.filter(t => t.dueDate === todayString).length;
+        NotificationsUtil.scheduleDailySummaryIfNeeded(countToday > 0, `You have ${countToday} tasks today`).catch(() => {});
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to load tasks');
@@ -46,6 +56,14 @@ export default function Index() {
   const saveTasks = async (newTasks: Task[]) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newTasks));
+      // Update daily summary scheduling based on whether there are tasks for today
+      const todayString = getTodayString();
+      const hasTasksToday = newTasks.some(t => t.dueDate === todayString);
+      // Build a short summary text
+      const countToday = newTasks.filter(t => t.dueDate === todayString).length;
+      const highCount = newTasks.filter(t => t.dueDate === todayString && t.priority === 'high').length;
+      const summaryText = `You have ${countToday} tasks today (${highCount} high priority).`;
+      NotificationsUtil.scheduleDailySummaryIfNeeded(hasTasksToday, summaryText).catch(() => {});
     } catch (error) {
       Alert.alert('Error', 'Failed to save tasks');
     }
@@ -61,6 +79,8 @@ export default function Index() {
     const newTasks = [...tasks, newTask];
     setTasks(newTasks);
     saveTasks(newTasks);
+    // Schedule notifications for the new task (if applicable)
+    NotificationsUtil.scheduleNotificationsForTask(newTask).catch(() => {});
   };
 
   const handleEditTask = (taskData: Omit<Task, 'id' | 'createdAt'>) => {
@@ -75,6 +95,9 @@ export default function Index() {
     setTasks(newTasks);
     saveTasks(newTasks);
     setEditingTask(undefined);
+    // Reschedule notifications for the edited task
+    const edited = { ...editingTask, ...taskData } as Task;
+    NotificationsUtil.scheduleNotificationsForTask(edited).catch(() => {});
   };
 
   const handleToggleTask = (id: string) => {
@@ -83,6 +106,18 @@ export default function Index() {
     );
     setTasks(newTasks);
     saveTasks(newTasks);
+    // If task was marked completed, cancel its notifications; if unmarked, reschedule
+    const toggled = tasks.find(t => t.id === id);
+    if (toggled) {
+      const nowCompleted = !toggled.completed;
+      if (nowCompleted) {
+        NotificationsUtil.cancelNotificationsForTask(id).catch(() => {});
+      } else {
+        // reschedule
+        const updated = { ...toggled, completed: false } as Task;
+        NotificationsUtil.scheduleNotificationsForTask(updated).catch(() => {});
+      }
+    }
   };
 
   const handleDeleteTask = (id: string) => {
@@ -95,6 +130,7 @@ export default function Index() {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
+            NotificationsUtil.cancelNotificationsForTask(id).catch(() => {});
             const newTasks = tasks.filter((task) => task.id !== id);
             setTasks(newTasks);
             saveTasks(newTasks);

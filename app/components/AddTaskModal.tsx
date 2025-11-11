@@ -23,6 +23,7 @@ interface AddTaskModalProps {
 export const AddTaskModal = ({ visible, onClose, onSave, editingTask }: AddTaskModalProps) => {
   const [title, setTitle] = useState(editingTask?.title || '');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [dueDate, setDueDate] = useState(() => {
     if (editingTask?.dueDate) {
       return editingTask.dueDate;
@@ -38,6 +39,7 @@ export const AddTaskModal = ({ visible, onClose, onSave, editingTask }: AddTaskM
     return initialDate;
   });
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>(editingTask?.priority || 'medium');
+  const [time, setTime] = useState<string | null>(editingTask?.time ?? null);
 
   // Helper to parse YYYY-MM-DD as local date (no UTC offset)
   const parseLocalDate = (dateString: string) => {
@@ -60,10 +62,12 @@ export const AddTaskModal = ({ visible, onClose, onSave, editingTask }: AddTaskM
         setTitle(editingTask.title || '');
         setDueDate(editingTask.dueDate || getTodayString());
         setPriority(editingTask.priority || 'medium');
+        setTime(editingTask.time ?? null);
       } else {
         setTitle('');
         setDueDate(getTodayString());
         setPriority('medium');
+        setTime(null);
       }
     }
   }, [visible, editingTask]);
@@ -120,6 +124,7 @@ export const AddTaskModal = ({ visible, onClose, onSave, editingTask }: AddTaskM
       completed: editingTask?.completed || false,
       priority,
       dueDate,
+      time: time ?? null,
     });
 
     setTitle('');
@@ -176,6 +181,41 @@ export const AddTaskModal = ({ visible, onClose, onSave, editingTask }: AddTaskM
                   const day = String(selectedDate.getDate()).padStart(2, '0');
                   const newDate = `${year}-${month}-${day}`;
                   setDueDate(newDate);
+                }}
+              />
+            )}
+          </View>
+
+          <View style={styles.dateContainer}>
+            <TouchableOpacity
+              style={styles.datePickerButton}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <MaterialIcons name="access-time" size={20} color="#007AFF" style={styles.dateIcon} />
+              <Text style={styles.dateText}>
+                {time ? time : 'No time set'}
+              </Text>
+            </TouchableOpacity>
+            {showTimePicker && (
+              <DateTimePicker
+                value={(() => {
+                  if (time) {
+                    const [hh, mm] = time.split(':').map(Number);
+                    const d = new Date();
+                    d.setHours(hh, mm, 0, 0);
+                    return d;
+                  }
+                  return new Date();
+                })()}
+                mode="time"
+                is24Hour={true}
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event: any, selectedDate?: Date) => {
+                  setShowTimePicker(Platform.OS === 'ios');
+                  if (!selectedDate) return;
+                  const hh = String(selectedDate.getHours()).padStart(2, '0');
+                  const mm = String(selectedDate.getMinutes()).padStart(2, '0');
+                  setTime(`${hh}:${mm}`);
                 }}
               />
             )}

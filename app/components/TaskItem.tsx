@@ -38,7 +38,10 @@ export const TaskItem = ({ task, onToggle, onEdit, onDelete, readonly }: TaskIte
         <Text style={[styles.title, task.completed && styles.completedText]}>
           {task.title}
         </Text>
-  <Text style={styles.date}>Due: {parseLocalDate(task.dueDate).toLocaleDateString()}</Text>
+  <Text style={styles.date}>
+    Due: {parseLocalDate(task.dueDate).toLocaleDateString()}
+    {task.time ? ` • ${task.time}` : ''}
+  </Text>
       </View>
       {!readonly && (
         <View style={styles.actions}>

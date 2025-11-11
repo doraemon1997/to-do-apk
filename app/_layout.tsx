@@ -1,7 +1,26 @@
 import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
+import NotificationsUtil from './utils/notifications';
+import * as Notifications from 'expo-notifications';
 
 export default function TabLayout() {
+  useEffect(() => {
+    // Configure foreground handler so notifications show alerts while app is running
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+
+    NotificationsUtil.initNotifications().then((granted) => {
+      console.log('Notifications permission granted:', granted);
+    });
+  }, []);
   return (
     <Tabs
       screenOptions={{
