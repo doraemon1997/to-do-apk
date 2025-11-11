@@ -6,15 +6,18 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  GestureResponderEvent,
+  PanResponderGestureState,
+  PanResponder,
 } from 'react-native';
-import { AnimatedScreen } from './components/AnimatedScreen';
+import { AnimatedScreen } from './_components/AnimatedScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
-import { TaskItem } from './components/TaskItem';
-import { AddTaskModal } from './components/AddTaskModal';
-import { Task } from './types/task';
+import { TaskItem } from './_components/TaskItem';
+import AddTaskModal from './_components/AddTaskModal';
+import { Task } from './_types/task';
 import { StatusBar } from 'expo-status-bar';
-import { router } from 'expo-router';
+import { useNavigation } from 'expo-router';
 
 const STORAGE_KEY = '@todo_tasks';
 
@@ -22,6 +25,27 @@ export default function WeekView() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>();
+  const navigation = useNavigation() as any;
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderRelease: (
+        _event: GestureResponderEvent,
+        gestureState: PanResponderGestureState
+      ) => {
+        const { dx } = gestureState;
+        const threshold = 50;
+        if (dx > threshold) {
+          // Swiped right: go to today
+          navigation.jumpTo('index');
+        } else if (dx < -threshold) {
+          // Swiped left: go to past
+          navigation.jumpTo('past');
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     loadTasks();
@@ -196,6 +220,7 @@ export default function WeekView() {
           </View>
         )}
         style={styles.list}
+        {...panResponder.panHandlers}
       />
 
       <TouchableOpacity

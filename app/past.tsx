@@ -1,15 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, Text, Alert } from 'react-native';
-import { AnimatedScreen } from './components/AnimatedScreen';
+import { StyleSheet, FlatList, Text, Alert, GestureResponderEvent, PanResponderGestureState, PanResponder } from 'react-native';
+import { AnimatedScreen } from './_components/AnimatedScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TaskItem } from './components/TaskItem';
-import { Task } from './types/task';
+import { TaskItem } from './_components/TaskItem';
+import { Task } from './_types/task';
 import { StatusBar } from 'expo-status-bar';
+import { useNavigation } from 'expo-router';
 
 const STORAGE_KEY = '@todo_tasks';
 
 export default function PastTasksView() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const navigation = useNavigation() as any;
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderRelease: (
+        _event: GestureResponderEvent,
+        gestureState: PanResponderGestureState
+      ) => {
+        const { dx } = gestureState;
+        const threshold = 50;
+        if (dx > threshold) {
+          // Swiped right: go to week
+          navigation.jumpTo('week');
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     loadTasks();
@@ -62,6 +81,7 @@ export default function PastTasksView() {
         )}
         style={styles.list}
         ListEmptyComponent={<Text style={styles.empty}>No tasks in the past 7 days.</Text>}
+        {...panResponder.panHandlers}
       />
     </AnimatedScreen>
   );

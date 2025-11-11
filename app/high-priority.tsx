@@ -5,10 +5,10 @@ import {
   FlatList,
   Text,
 } from 'react-native';
-import { AnimatedScreen } from './components/AnimatedScreen';
+import { AnimatedScreen } from './_components/AnimatedScreen';
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { TaskItem } from './components/TaskItem';
-import { Task } from './types/task';
+import { TaskItem } from './_components/TaskItem';
+import { Task } from './_types/task';
 
 export default function HighPriority() {
   const { tasks: tasksParam } = useLocalSearchParams();
