@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Task } from '../_types/task';
+import { Task } from '../types/task';
 
 interface AddTaskModalProps {
   visible: boolean;

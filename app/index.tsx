@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AnimatedScreen } from './_components/AnimatedScreen';
+import { AnimatedScreen } from '../src/components/AnimatedScreen';
 import {
   View,
   StyleSheet,
@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
-import { TaskItem } from './_components/TaskItem';
-import AddTaskModal from './_components/AddTaskModal';
-import { Task } from './_types/task';
-import NotificationsUtil from './_utils/notifications';
+import { TaskItem } from '../src/components/TaskItem';
+import AddTaskModal from '../src/components/AddTaskModal';
+import { Task } from '../src/types/task';
+import NotificationsUtil from '../src/utils/notifications';
 import { StatusBar } from 'expo-status-bar';
 import { router, useNavigation } from 'expo-router';
 

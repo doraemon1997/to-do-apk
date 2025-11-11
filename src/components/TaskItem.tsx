@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Task } from '../_types/task';
+import { Task } from '../types/task';
 
 interface TaskItemProps {
   task: Task;

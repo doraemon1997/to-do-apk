@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, Text, Alert, GestureResponderEvent, PanResponderGestureState, PanResponder } from 'react-native';
-import { AnimatedScreen } from './_components/AnimatedScreen';
+import { AnimatedScreen } from '../src/components/AnimatedScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TaskItem } from './_components/TaskItem';
-import { Task } from './_types/task';
+import { TaskItem } from '../src/components/TaskItem';
+import { Task } from '../src/types/task';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from 'expo-router';
 

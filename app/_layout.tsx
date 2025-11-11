@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
-import NotificationsUtil from './_utils/notifications';
+import NotificationsUtil from '../src/utils/notifications';
 import * as Notifications from 'expo-notifications';
 
 export default function TabLayout() {

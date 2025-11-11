@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
-import { Task } from '../_types/task';
+import { Task } from '../types/task';
 
 const NOTIF_MAP_PREFIX = '@notif_';
 const DAILY_SUMMARY_KEY = '@notif_daily_summary';
